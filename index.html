@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>T25</title>
+	<style>
+		.responsive-image {display: block;margin: 0 auto;max-width: 80%;height: auto;}
+		.c-verde {background-color: #a1f089;padding: 10px;border-radius: 15px;
+			    max-width: 85%;margin: 0 auto 0 5%; /*S-D-Inf-Iz*/}
+		.c-gris {background-color: #E3E4E5;padding: 10px;border-radius: 15px;max-width: 85%;
+			 margin: 0 auto 0 5%; /*S-D-Inf-Iz*/}
+	</style>
+	<script>
+		function CargarImagen(url) {window.open(url, '_blank');}
+	</script>
+</head>
+<body>
+  <div style="text-align: center;"><h1>Control de valvulas - Intercooler</h1></div>
+  <div class="content">
+    <div class="c-verde">
+        <p>Se pretende encontrar una expresión para calcular el valor de apertura de las 
+          válvulas FCV-9051 y FCV-9052, utilizando como variables de entrada T25, TE-9004 
+          y TE-9005. Para el análisis, se considerarán estados ideales en los que no se 
+          toman en cuenta los lazos de retroalimentación del proceso.<br><br>
+          A continuación, se explicará la lógica en segmentos concisos para una comprensión 
+          gradual de las variables siguientes:</p>
+      <ul><li>TBLDMD</li></ul>
+      <ul><li>BLEND_FRACTION_HOT</li></ul>
+      <ul><li>ICBYPJ</li></ul>
+      <ul><li>ICTHRJ</li></ul>
+      <ul><li>Conversión de tablas a función</li></ul>
+    </div>
+</div>
 
+<div style="text-align: center;">
+  <h2 style="margin: 5px 0;">- Diagrama del cálculo de la potencia estimada -</h2>
+</div>
+
+<div class="c-gris">
+  <p>En el siguiente diagrama de lógica:</p>
+  <ul><li>En el bloque de suma 1: A la variable T25REF se le suma un valor de -5 °F</li></ul>
+  <ul><li>En el bloque de suma 14: La variable TBL_TRIM no se la considera debido a 
+    que proviene de una retroalimentación constante del sensor T25, que permite la 
+    corrección constante al valor optimo (integral: aceleración), está pensado para 
+    llegar al valor optimo y desacelerar la solicitud de apertura y cierre de válvulas. </li></ul>
+  <p style="font-weight: bold;">TBLDMD tendrá a la salida el resultado de: T25REF -5 °F</p><br>
+  
+  <img src="Img/TBLDMD.jpg" alt="Descripción de la imagen" class="responsive-image">
+</div>
+  
+  
+  
+  
+</body>
+</html>
