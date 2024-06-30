@@ -16,40 +16,83 @@
 	</script>
 </head>
 <body>
-  <div style="text-align: center;"><h1>Control de valvulas - Intercooler</h1></div>
-  <div class="content">
-    <div class="c-verde">
-        <p>Se pretende encontrar una expresión para calcular el valor de apertura de las 
-          válvulas FCV-9051 y FCV-9052, utilizando como variables de entrada T25, TE-9004 
-          y TE-9005. Para el análisis, se considerarán estados ideales en los que no se 
-          toman en cuenta los lazos de retroalimentación del proceso.<br><br>
-          A continuación, se explicará la lógica en segmentos concisos para una comprensión 
-          gradual de las variables siguientes:</p>
-      <ul><li>TBLDMD</li></ul>
-      <ul><li>BLEND_FRACTION_HOT</li></ul>
-      <ul><li>ICBYPJ</li></ul>
-      <ul><li>ICTHRJ</li></ul>
-      <ul><li>Conversión de tablas a función</li></ul>
-    </div>
-</div>
+	<div style="text-align: center;"><h1>Control de valvulas - Intercooler</h1></div>
+	<div class="content">
+		<div class="c-verde">
+			<p>Se pretende encontrar una expresión para calcular el valor de apertura de las 
+				válvulas FCV-9051 y FCV-9052, utilizando como variables de entrada T25, TE-9004 
+				y TE-9005. Para el análisis, se considerarán estados ideales en los que no se 
+				toman en cuenta los lazos de retroalimentación del proceso.<br><br>
+				A continuación, se explicará la lógica en segmentos concisos para una 
+			        comprensión gradual de la expresión final. Se desglosarán los modelos
+			        correspondientes a las siguientes variables:</p>
+			<ul><li>1 - TBLDMD</li></ul>
+      			<ul><li>2 - BLEND_FRACTION_HOT</li></ul>
+      			<ul><li>3 - ICBYPJ</li></ul>
+      			<ul><li>4 - ICTHRJ</li></ul>
+      			<ul><li>5 - Conversión de tablas a función</li></ul>
+		</div>
+	</div><br>
+	
+	<h2 style="margin: 5px 70;">1 - TBLDMD</h2>
+	<div class="c-gris">
+		<p>En el siguiente diagrama de lógica:</p>
+		<ul><li><u>En el bloque 1 de suma</u>: A la variable <strong>T25REF</strong> se le suma un valor de -5 °F</li></ul>
+		<ul><li><u>En el bloque 14 de suma</u>: La variable <strong>TBL_TRIM</strong> no se la considera debido a 
+			que proviene de una retroalimentación constante del sensor T25, que permite la 
+			corrección constante al valor optimo (integral: aceleración), está pensado para 
+			llegar al valor optimo y desacelerar la solicitud de apertura y cierre de válvulas. </li></ul>
+		<p style="font-weight: bold;">TBLDMD tendrá a la salida el resultado de: T25REF -5 °F</p><br>
+		<img src="Img/TBLDMD.jpg" alt="Descripción de la imagen" class="responsive-image">
+	</div><br>
+	
+	<h2 style="margin: 5px 70;">2 - BLEND_FRACTION_HOT</h2>
+	<div class="c-gris">
+		<p>En el siguiente diagrama de lógica:</p>
+		<ul><li><u>En el bloque 2 de suma</u>: 
+			Diferencia entre temperatura de salida y temperatura de entrada en el intercooler
+			<strong>(TE-9005SEL - TE-9004SEL)</strong></li></ul>
+		<ul><li><u>En el bloque 4 de función MATH</u>: 
+			Configurado en este caso como "función reciproca", "función inversa"</li></ul>
+		<ul><li><u>En el bloque 5 de suma</u>: Diferencia entre las variables
+			<strong>TBLDMD - TE-9004SEL</strong></li></ul>
+		<p style="font-weight: bold;">
+			BLEND_F = [1 / (TE-9005SEL - TE-9004SEL)] * (TBLDMD - TE-9004SEL)</p><br>
+		<img src="Img/BLEND_F.jpg" alt="Descripción de la imagen" class="responsive-image">
+	</div><br>
+	
+	<h2 style="margin: 5px 70;">3 - ICBYPJ</h2>
+	<div class="c-gris">
+		<p>En el siguiente diagrama de lógica:</p>
+		<ul><li><u>En el bloque 1 de suma </u>: 
+			Realiza la operación <strong>BLEND_F - 1</strong></li></ul>
+		<ul><li><u>En el bloque 2 de multiplicación</u>: 
+			Multiplica el valor de la salida del <strong>bloque 1</strong> con un valor fijo de
+			<strong>833.33</strong></li></ul>
+		<ul><li><u>En el bloque 3 de función MATH</u>: Aplica la raiz cuadrada al valor fijo de
+			<strong>17.81</strong></li></ul>
+		<ul><li><u>En el bloque 7 de división</u>: 
+			Realiza la división entre la salida del <strong>bloque 2</strong> y el valor fijo de 
+			<strong>4.22</strong></li></ul>
+		<p style="font-weight: bold;">
+			ICBYPJ = [(BLEND_F - 1) * 833.33] / 4.22</p><br>
+		<img src="Img/ICBYPJ.jpg" alt="Descripción de la imagen" class="responsive-image">
+	</div><br>
+	
+	<h2 style="margin: 5px 70;">4 - ICTHRJ</h2>
+	<div class="c-gris">
+		<p>En el siguiente diagrama de lógica:</p>
+		<ul><li><u>En el bloque 4 de multiplicación </u>: 
+			Realiza la operación <strong>BLEND_F * 833.33</strong></li></ul>
+		<ul><li><u>En el bloque 5 de función MATH</u>: Aplica la raiz cuadrada al valor fijo de
+			<strong>23.81</strong></li></ul>
+		<ul><li><u>En el bloque 6 de división</u>: 
+			Realiza la división entre la salida del <strong>bloque 4</strong> y el valor fijo de 
+			<strong>4.879</strong></li></ul>
+		<p style="font-weight: bold;">
+			ICTHRJ = (BLEND_F * 833.33) / 4.879</p><br>
+		<img src="Img/ICTHRJ.jpg" alt="Descripción de la imagen" class="responsive-image">
+	</div><br>
 
-<div style="text-align: center;">
-  <h2 style="margin: 5px 0;">- Diagrama del cálculo de la potencia estimada -</h2>
-</div>
-
-<div class="c-gris">
-	<p>En el siguiente diagrama de lógica:</p>
-	<ul><li><u>En el bloque de suma 1</u>: A la variable <strong>T25REF</strong> se le suma un valor de -5 °F</li></ul>
-	<ul><li><u>En el bloque de suma 14</u>: La variable <strong>TBL_TRIM</strong> no se la considera debido a 
-		que proviene de una retroalimentación constante del sensor T25, que permite la 
-		corrección constante al valor optimo (integral: aceleración), está pensado para 
-		llegar al valor optimo y desacelerar la solicitud de apertura y cierre de válvulas. </li></ul>
-	<p style="font-weight: bold;">TBLDMD tendrá a la salida el resultado de: T25REF -5 °F</p><br>
-	<img src="Img/TBLDMD.jpg" alt="Descripción de la imagen" class="responsive-image">
-</div>
-  
-  
-  
-  
 </body>
 </html>
