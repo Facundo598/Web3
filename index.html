@@ -108,7 +108,7 @@
 		<ul><li>TE-9004SEL</li></ul>
       		<ul><li>TE-9005SEL</li></ul>
       		<ul><li>T25REF: Valor Fijo de 85 °F (29,4 °C)</li></ul>
-		<p style="text-align: center;"><strong>FCV-9052 = 0.36 * ICBYPJ – 0.0004 * ICBYPJ ^2 + 10.3</strong></p>
+		<p style="text-align: center;"><strong>FCV-9051 = 0.37 * ICTHRJ – 0.0004 * ICTHRJ ^2 + 10.2</strong></p>
 		<p style="text-align: center;"><strong>FCV-9052 = 0.36 * ICBYPJ – 0.0004 * ICBYPJ ^2 + 10.3</strong></p>
 		<p>Donde<br><br>
 			ICBYPJ = [(BLEND_F - 1) * 833.33] / 4.22<br><br>
@@ -119,11 +119,82 @@
 		<p>Se ha introducido la fórmula en una calculadora, la cual permite ajustar los datos 
 			de T25, TE-9004 y TE-9005. Para utilizar la calculadora, tener en cuenta los 
 			siguientes datos históricos.</p>
+		<ul><li>T25: 85 °F (29.4 °C) Valor minimo  - 103 °F (39.4 °C) Valor Maximo</li></ul>
 		<ul><li>TE-9004SEL</li></ul>
 		<ul><li>TE-9005SEL</li></ul>
+		
+		
+		<div class="container" style="text-align: center;">
+			<div style="display: inline-block;">
+				<p style="text-align: center;">T25REF [°F]</p>
+				<input type="number" id="T25" min="85" max="103" value="85" oninput="IC()" style="text-align: center;">
+			</div>
+			
+			<span>&nbsp;&nbsp;</span>
+			<div style="display: inline-block;">
+				<p style="text-align: center;">TE-9004 [°C] = <span id="T9004Value">90</span></p>
+				<input type="range" id="slider9004" min="10" max="35" step="0.1" value="27" oninput="IC('slider9004')">
+			</div>
+			
+			<span>&nbsp;&nbsp;</span>
+			<div style="display: inline-block;">
+				<p style="text-align: center;">TE-9005 [°C] = <span id="T9005Value">1</span></p>
+				<input type="range" id="slider9005" min="40" max="60" step="0.1" value="56" oninput="IC('slider9005')">
+			</div>
+			<h3 style="text-align: center;">FCV - 9051 [%] = <span id="DMD9051">11</span></h3> 
+      			<h3 style="text-align: center;">FCV - 9052 [%] = <span id="DMD9052">11</span></h3>
+      			<h3 style="text-align: center;">SUMA = <span id="SUMA">11</span></h3>
+			
+			<script>
+				function IC(sliderId) {
+					// Obtiene el valor del slider específico
+					if (sliderId) {
+						let slider = document.getElementById(sliderId);
+						let sliderValue = parseFloat(slider.value);
+						
+						// Actualiza el valor del slider específico en su respectivo span
+						if (sliderId === 'slider9004') {
+							document.getElementById('T9004Value').textContent = sliderValue.toFixed(1);} 
+						else if (sliderId === 'slider9005') {
+							document.getElementById('T9005Value').textContent = sliderValue.toFixed(1);}}
+					
+					// Obtiene los valores actuales de los sliders y el input T25
+					let T9004Value = parseInt(document.getElementById('slider9004').value);
+					let T9005Value = parseFloat(document.getElementById('slider9005').value);
+					let T25Value = parseFloat(document.getElementById('T25').value);
+					
+					// Convertir
+			                let T9004Value_F = T9004Value * 9/5 + 32;
+			                let T9005Value_F = T9005Value * 9/5 + 32;
+			
+			                // Calcula
+			              	let TBLDMD = T25Value - 5;
+			              	let BLEND_F = (TBLDMD - T9004Value_F) * (1/(T9005Value_F - T9004Value_F));
+			              	let ICBYPJ = ((1 - BLEND_F) * 833.33) / 4.22;
+			              	let ICTHRJ = (BLEND_F * 833.33) / 4.87;
+			              	let TABL_BYPASS = (0.36 * ICBYPJ) - (0.0004 * ICBYPJ**2) + 10.3;
+			              	let TABL_THROTTLE = (0.37 * ICTHRJ) - (0.0004 * ICTHRJ**2) + 10.2;
+			              	let DMD9052 = TABL_BYPASS;
+				        let DMD9051 = TABL_THROTTLE;
+			              	let SUMA = DMD9051+DMD9052;
+			                DMD9051 = DMD9051.toFixed(2);
+			              	DMD9052 = DMD9052.toFixed(2);
+			              	SUMA = SUMA.toFixed(2);
+			
+			                // Muestra la suma en el elemento con id 'sumValue'
+			                document.getElementById('DMD9051').textContent = DMD9051;
+			              	document.getElementById('DMD9052').textContent = DMD9052;
+			              	document.getElementById('SUMA').textContent = SUMA;
+				}
+				// Inicializa los valores al cargar la página
+				window.onload = function() {IC('slider9004'); IC('slider9005'); IC();}
+			</script>
+		</div>
+	
+	
 	</div><br>
 
-	
 
+	
 </body>
 </html>
