@@ -152,9 +152,10 @@
 				<p style="text-align: center;">TE-9005 [°C] = <span id="T9005Value">1</span></p>
 				<input type="range" id="slider9005" min="45.5" max="51.1" step="0.1" value="47.7" oninput="IC('slider9005')">
 			</div>
+			<h3 style="text-align: center;">BYPASS_DMD (9052) = <span id="ICBYPJ">11</span></h3>
+			<h3 style="text-align: center;">THROTTLE_DMD (9051) = <span id="ICTHRJ">11</span></h3>
 			<h3 style="text-align: center;">FCV - 9051 [%] = <span id="DMD9051">11</span></h3> 
       			<h3 style="text-align: center;">FCV - 9052 [%] = <span id="DMD9052">11</span></h3>
-      			<h3 style="text-align: center;">SUMA = <span id="SUMA">11</span></h3>
 			
 			<script>
 				function IC(sliderId) {
@@ -179,10 +180,10 @@
 			                let T9005Value_F = T9005Value * 9/5 + 32;
 			
 			                // Calcula
-			              	let TBLDMD = T25Value - 5;
-			              	let BLEND_F = (TBLDMD - T9004Value_F) * (1/(T9005Value_F - T9004Value_F));
-			              	let ICBYPJ = ((BLEND_F - 1) * 833.33) / 4.22;
-			              	let ICTHRJ = (BLEND_F * 833.33) / 4.87;
+			              	let TBLDMD = T25Value - 5 + 7; // Correccion 7, ver si cambiar
+			              	let BLEND_F = (TBLDMD - T9004Value_F) * (1/(T9005Value_F - T9004Value_F)); //OK
+			              	let ICBYPJ = ((1 - BLEND_F) * 833.33) / 4.22; //OK
+			              	let ICTHRJ = (BLEND_F * 833.33) / 4.87; //OK
 			              	let TABL_BYPASS = (0.36 * ICBYPJ) - (0.0004 * ICBYPJ**2) + 10.3;
 			              	let TABL_THROTTLE = (0.37 * ICTHRJ) - (0.0004 * ICTHRJ**2) + 10.2;
 			              	let DMD9052 = TABL_BYPASS;
@@ -190,12 +191,14 @@
 			              	let SUMA = DMD9051+DMD9052;
 			                DMD9051 = DMD9051.toFixed(2);
 			              	DMD9052 = DMD9052.toFixed(2);
-			              	SUMA = SUMA.toFixed(2);
+			              	ICBYPJ = ICBYPJ.toFixed(2);
+					ICTHRJ = ICTHRJ.toFixed(2);
 			
 			                // Muestra la suma en el elemento con id 'sumValue'
 			                document.getElementById('DMD9051').textContent = DMD9051;
 			              	document.getElementById('DMD9052').textContent = DMD9052;
-			              	document.getElementById('SUMA').textContent = SUMA;
+			              	document.getElementById('ICBYPJ').textContent = ICBYPJ;
+					document.getElementById('ICTHRJ').textContent = ICTHRJ;
 				}
 				// Inicializa los valores al cargar la página
 				window.onload = function() {IC('slider9004'); IC('slider9005'); IC();}
