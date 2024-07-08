@@ -181,7 +181,7 @@
 			                // Calcula
 			              	let TBLDMD = T25Value - 5;
 			              	let BLEND_F = (TBLDMD - T9004Value_F) * (1/(T9005Value_F - T9004Value_F));
-			              	let ICBYPJ = ((1 - BLEND_F) * 833.33) / 4.22;
+			              	let ICBYPJ = ((BLEND_F - 1) * 833.33) / 4.22;
 			              	let ICTHRJ = (BLEND_F * 833.33) / 4.87;
 			              	let TABL_BYPASS = (0.36 * ICBYPJ) - (0.0004 * ICBYPJ**2) + 10.3;
 			              	let TABL_THROTTLE = (0.37 * ICTHRJ) - (0.0004 * ICTHRJ**2) + 10.2;
