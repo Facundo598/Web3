@@ -204,8 +204,25 @@
 				window.onload = function() {IC('slider9004'); IC('slider9005'); IC();}
 			</script>
 		</div>
-	
-	
+	</div><br>
+
+	<div class="c-gris"><h2 style="margin: 5px 0;">Expresion llevada a la practica</h2>
+		<p>Se considera la variable <strong>TBL_TRIM</strong>, esta señal en principio esta diseñada para
+			funcionar como PID mediante un bloque integral en el tiempo siguiendo el algoritmo de Euler
+			<strong>OUT(t) = OUT (t-1) * G * T</strong>, esta expresión da como resultado en la practica un 
+            		valor promedio de 6, con la unidad en servicio con valvulas reguladoras en estado estable.
+            		Como otro punto a tener en cuenta la funciones obtenidas por tablas el apartado "5 - Tablas" 
+            		difiere de la función modelada, esto se debe al rango que operan las aprerturas de las valvulas,
+            		se realizo una correccion de 5 puntos quedando la siguiente expresión.</p>
+		<ul><li><u>Función para FCV-9052 ajustada en la practica </u>:<br><br>
+			<ul>FCV-9052 = 0.36 * ICBYPJ – 0.0004 * ICBYPJ ^2 + <strong>15.3</strong></ul></li></ul>
+		<ul><li><u>Función para FCV-9051 ajustada en la practica </u>:<br><br>
+			<ul>FCV-9051 = 0.37 * ICTHRJ – 0.0004 * ICTHRJ ^2 + <strong>15.2</strong></ul></li></ul>
+		<br>
+		
+		<a href="https://pictg.espaciopampa.com/PIVision/#/Displays/489/Intercooler---Valvulas-reguladoras" target="_blank">
+			<img src="PI - ValvReg.jpg" class="responsive-image">
+		</a>
 	</div><br>
 
 
